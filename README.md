@@ -133,7 +133,8 @@ The full pipeline now runs in approximately **12 minutes**, compared to the prev
 
 ## Snapshot
 
-### DBT Log Tracker Dashboard
-![image]()
+### Monthly Metrics Summary
+![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/metrics_sum.png)
 
-![image]()
+### DBT Log Tracker Dashboard
+![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/dbt_log.png)
