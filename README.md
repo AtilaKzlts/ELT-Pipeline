@@ -1,17 +1,21 @@
-#  End-to-End ELT Pipeline with Dashboards
+<div align="center">
+  <h1>End-to-End ELT Pipeline with Dashboards</h1>
+ </p>
+</div>
+
 
 ![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/diagram.svg)
 
 ## Table of Contents
 
-* Project Introduction
+  * Project Introduction
   * Steps
-  * Transformation Logic
   * DAG Structure
   * DBT Structure
   
 
 ## Project Introduction
+
 
 This project was developed for a small e-commerce business aiming to automate and streamline its data analytics workflow. The company manages core operational data such as customers, orders, products, and order_items, which are stored in AWS S3 as raw files. Using a modern ELT approach, this data is ingested into Snowflake, transformed using dbt, and visualized with Tableau.
 
