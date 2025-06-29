@@ -24,6 +24,7 @@ The pipeline was designed to replace a previously manual process that took up to
 The workflow runs daily at 11:00 PM, ensuring up-to-date metrics for the next business day. A dedicated Tableau dashboard was also built to monitor dbt job logs, execution durations, and data freshness—providing transparency and traceability throughout the entire pipeline.
 
 To ensure reliability, the system is configured to send email notifications in case of any pipeline failure. These alerts contain detailed logs and direct links to help stakeholders quickly investigate and resolve issues.
+##### [> Project Folder](https://github.com/AtilaKzlts/ETL-Pipeline/tree/main/assets/project)
 
 
 ## Steps
