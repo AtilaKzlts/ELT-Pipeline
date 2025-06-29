@@ -1,0 +1,28 @@
+name: 'air_dbt'
+version: '1.0.0'
+
+profile: 'air_dbt'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"] 
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  air_dbt:
+    +generate_schema_name: false
+    staging:
+      +schema: dbt_schema_staging
+      +materialized: view
+    marts:
+      +schema: dbt_schema_marts  
+      +materialized: table
+    intermediate:
+      +schema: dbt_schema_marts # Intermediate modeller için ayrı bir şema olmali ama ben marts icine attim 
+      +materialized: table      

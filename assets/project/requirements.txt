@@ -1,0 +1,8 @@
+# Astro Runtime includes the following pre-installed providers packages: https://www.astronomer.io/docs/astro/runtime-image-architecture#provider-packages
+apache-airflow-providers-dbt-cloud==4.3.2 # Localde calistigi icin bazi kaynaklar buna gerek yok diyor silinebilir gibi
+
+astronomer-cosmos
+
+# apache-airflow-providers-snowflake bu yeni olan ama basit operator gelmiyor   
+
+apache-airflow-providers-snowflake>=3.0.0

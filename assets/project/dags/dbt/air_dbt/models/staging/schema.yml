@@ -1,0 +1,73 @@
+version: 2
+
+sources:
+  - name: raw
+    database: dbt_db
+    schema: dbt_schema
+    tables:
+      - name: orders
+      - name: order_items
+      - name: customer
+      - name: products
+
+# models/staging/schema.yml
+
+models:
+  - name: stg_customers
+    description: "Ham müşteri verilerinin temizlenmiş ve sahnelenmiş versiyonu."
+    columns:
+      - name: customer_id
+        description: "Müşterinin benzersiz kimliği."
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Müşterinin e-posta adresi."
+        tests:
+          - not_null
+          # - unique # Eğer email her zaman benzersiz olmalıysa ekle
+          - dbt_expectations.expect_column_values_to_match_regex: # dbt_expectations paketi kurulu ise
+              regex: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+      - name: registration_date
+        description: "Müşterinin kayıt tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list: # dbt_expectations kurulu ise
+              column_type_list: ["DATE", "DATETIME", "TIMESTAMP"]
+
+  - name: stg_orders
+    description: "Ham sipariş verilerinin temizlenmiş ve sahnelenmiş versiyonu."
+    columns:
+      # ... diğer sütunlar
+      - name: total_amount
+        description: "Siparişin toplam tutarı."
+        tests:
+        - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.01 # Eğer mutlaka 0'dan büyük olmalıysa (örneğin 1 kuruş/sent)
+              # VEYA: min_value: 0 # Eğer 0 da geçerli pozitiflik ise
+              max_value: 1000000.00 # Veri setinizdeki beklenen maksimum tutar. Bunu kendi verinize göre ayarlayın.
+              # strict_min: True # min_value'dan kesinlikle büyük olmalı
+              # strict_max: True # max_value'dan kesinlikle küçük olmalı
+              # (strict_min/max parametreleri genellikle default olarak True/False'dur, paketin dokümanına bakılabilir)
+
+  - name: stg_order_items
+    description: "Ham sipariş kalemi verilerinin temizlenmiş ve sahnelenmiş versiyonu."
+    columns:
+      # ... diğer sütunlar
+      - name: quantity
+        description: "Sipariş edilen ürün adedi."
+        tests:
+          - not_null
+          
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0 # Pozitif veya sıfır olmasını istediğiniz için minimum 0
+              max_value: 1000 # Veri setinizdeki beklenen maksimum adet. Lütfen bu değeri kendi verinize göre ayarlayın.
+  - name: stg_products
+    description: "Ham ürün verilerinin temizlenmiş ve sahnelenmiş versiyonu."
+    columns:
+    - name: product_id
+      tests:
+        - not_null
+
+          
+        

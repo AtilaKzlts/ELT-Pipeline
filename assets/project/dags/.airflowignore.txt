@@ -1,0 +1,6 @@
+
+dbt/air_dbt/target
+dbt/air_dbt/dbt_packages
+dbt/air_dbt/.dbt
+dbt_venv/
+

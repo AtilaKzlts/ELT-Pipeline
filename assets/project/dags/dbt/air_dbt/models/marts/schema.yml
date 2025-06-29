@@ -1,0 +1,368 @@
+version: 2
+
+models:
+  - name: customer_order_summary
+    description: "Müşterilerin sipariş detayları ve sipariş kalemleri özetini içeren nihai mart tablosu."
+    columns:
+      - name: customer_id
+        description: "Müşterinin benzersiz kimliği."
+        tests:
+          - not_null
+
+      - name: total_spent
+        description: "Müşterinin tamamladığı siparişlerdeki toplam harcama tutarı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 1000000.00
+
+      - name: avg_order_value
+        description: "Müşterinin tamamladığı siparişlerdeki ortalama sipariş tutarı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 5000.00
+
+      - name: first_order_date
+        description: "Müşterinin ilk sipariş tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: last_order_date
+        description: "Müşterinin son sipariş tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+  - name: customer_metrics
+    description: "Müşterilerin ömür boyu değer ve sipariş sıklığı gibi temel metrikleri."
+    columns:
+      - name: customer_id
+        description: "Müşterinin benzersiz kimliği."
+        tests:
+          - unique
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: total_orders
+        description: "Müşterinin toplam tamamlanmış sipariş sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000
+
+      - name: returned_orders
+        description: "Müşterinin iade ettiği sipariş sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 500
+
+      - name: total_spent
+        description: "Müşterinin toplam harcadığı tutar."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 10000000.00
+
+      - name: avg_order_value
+        description: "Müşterinin ortalama sipariş değeri."
+        tests:
+          - not_null:
+              severity: warn
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000.00
+
+      - name: total_items_purchased
+        description: "Müşterinin toplam satın aldığı ürün adedi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000
+
+      - name: first_order_date
+        description: "Müşterinin ilk sipariş tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: last_order_date
+        description: "Müşterinin son sipariş tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: days_since_last_order
+        description: "Müşterinin son siparişinden bu yana geçen gün sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 5000
+
+      - name: customer_segment
+        description: "Müşterinin segmenti (VIP, High_Value vb.)."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ['VIP', 'High_Value', 'Regular', 'Low_Value', 'No_Purchase']
+
+      - name: lifecycle_stage
+        description: "Müşterinin yaşam döngüsü aşaması (Active, At_Risk vb.)."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ['Active', 'At_Risk', 'Inactive', 'Lost', 'Never_Purchased']
+
+  - name: customers_summary
+    description: "Temel müşteri bilgilerini içeren mart tablosu."
+    columns:
+      - name: customer_id
+        description: "Müşterinin benzersiz kimliği."
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: full_name
+        description: "Müşterinin tam adı."
+        tests:
+          - not_null
+
+      - name: email
+        description: "Müşterinin e-posta adresi."
+        tests:
+          - not_null
+          - unique
+
+      - name: email_domain
+        description: "E-posta adresinin domain kısmı."
+        tests:
+          - not_null
+
+      - name: age
+        description: "Müşterinin yaşı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 18
+              max_value: 100
+
+      - name: registration_date
+        description: "Müşterinin kayıt tarihi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1995-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: country
+        description: "Müşterinin ülkesi."
+        tests:
+          - not_null
+
+  - name: monlty_sales_summary
+    description: "Aylık satış özetini içeren mart tablosu."
+    columns:
+      - name: month
+        description: "Ayın başlangıç tarihi (YYYY-MM-01 formatında)."
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: total_orders
+        description: "Ay boyunca tamamlanan toplam sipariş sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100000
+
+      - name: total_spent
+        description: "Ay boyunca elde edilen toplam gelir."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 50000000.00
+
+      - name: avg_order_value
+        description: "Ay boyunca ortalama sipariş değeri."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 10000.00
+
+      - name: unique_customers
+        description: "Ay boyunca benzersiz müşteri sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100000
+
+  - name: order_items_summary
+    description: "Günlük bazda sipariş kalemleri özetini içeren mart tablosu."
+    columns:
+      - name: order_day
+        description: "Siparişlerin toplandığı gün."
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'2015-01-01'::DATE"
+              max_value: "CURRENT_DATE()"
+
+      - name: total_quantity
+        description: "Belirli bir gündeki toplam sipariş kalemi adedi."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000
+
+      - name: total_revenue
+        description: "Belirli bir gündeki toplam gelir."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 5000000.00
+
+      - name: total_discount
+        description: "Belirli bir gündeki toplam indirim tutarı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 1000000.00
+
+      - name: total_order_items
+        description: "Belirli bir gündeki benzersiz sipariş kalemi sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 100000
+
+  - name: paymet_method_analysis
+    description: "Ödeme yöntemine göre sipariş ve gelir özetini içeren mart tablosu."
+    columns:
+      - name: payment_method
+        description: "Ödeme yöntemi (Kredi Kartı, Banka Havalesi vb.)."
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ['bank_transfer', 'paypal', 'Cash on Delivery', 'credit_card']
+
+      - name: total_orders
+        description: "Bu ödeme yöntemiyle yapılan toplam sipariş sayısı."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000
+
+      - name: total_revenue
+        description: "Bu ödeme yöntemiyle elde edilen toplam gelir."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 100000000.00
+  - name: products_performance
+    description: "Ürün bazlı satış ve performans metriklerini içeren mart tablosu."
+    columns:
+    - name: product_id
+      description: "Ürünün benzersiz ID'si."
+      tests:
+        - not_null
+        - unique
+    
+    - name: total_units_sold
+      description: "Toplam satılan ürün adedi."
+      tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 0
+
+    - name: gross_revenue
+      description: "Toplam brüt gelir."
+      tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 0
+
+    - name: net_revenue
+      description: "İndirim sonrası net gelir."
+      tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 0
+
+    - name: average_discount_rate_on_product
+      description: "İndirim yüzdesi (0 ile 1 arasında olmalı)."
+      tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 0
+            max_value: 1
+  - name: geographical_performance
+    description: "Coğrafi bölgelere göre satış ve performans metriklerini içeren mart tablosu."
+    columns:
+      - name: country
+        description: "Coğrafi bölge (örn. EMEA, APAC, Amerika)."
+        tests:
+          - not_null
+          
+  - name: int_customer_order_summary
+    description: "Müşterilerin sipariş detayları ve sipariş kalemleri özetini içeren nihai mart tablosu."
+    columns:
+      - name: customer_id
+        description: "Müşterinin benzersiz kimliği."
+        tests:
+          - not_null
+
+  - name: customer_retention_churn  # Model dosyanın ismi neyse onu yaz
+    description: "Aylık bazda yeni ve mevcut müşteri sayılarını özetleyen kohort modeli"
+    columns:
+      - name: activity_month
+        tests:
+          - not_null
+          - unique  # Her ay için yalnızca bir kayıt olmalı
+      - name: new_customers
+        tests:
+          - not_null
+      - name: retained_customers
+        tests:
+          - not_null
+      - name: total_active_customers_this_month
+        tests:
+          - not_null
+      - name: total_active_customers_last_month
+        tests:
+          - not_null
