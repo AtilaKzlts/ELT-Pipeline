@@ -1,5 +1,7 @@
 <div align="center">
-  <h1>End-to-End ELT Pipeline with Dashboards</h1>
+  <h1>Automated ELT Pipeline for E-commerce Analytics
+
+</h1>
  </p>
 </div>
 
