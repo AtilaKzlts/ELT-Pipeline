@@ -133,4 +133,5 @@ All **dbt logs and execution metadata** are tracked and visualized to monitor mo
 ![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/Admin_Dashboard.png)
 
 ### DBT Log Tracker Dashboard
-![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/dbt_log.png)
+
+![image](https://github.com/AtilaKzlts/ELT-Pipeline/blob/main/assets/dbt_log.png)
