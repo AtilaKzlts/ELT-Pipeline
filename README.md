@@ -130,10 +130,11 @@ All **dbt logs and execution metadata** are tracked and visualized to monitor mo
 ## Snapshot
 
 ### Monthly Metrics Summary
+[See Dashboard](https://public.tableau.com/app/profile/atilla.kiziltas/viz/AdminDashboard-ELT/Dashboard1#1)
 ![image](https://github.com/AtilaKzlts/ETL-Pipeline/blob/main/assets/Admin_Dashboard.png)
 
 ### DBT Log Tracker Dashboard
-
+[See Dashboard](https://public.tableau.com/app/profile/atilla.kiziltas/viz/DBT_LOG/Dashboard1)
 ![image](https://github.com/AtilaKzlts/ELT-Pipeline/blob/main/assets/dbt_log.png)
 
 
