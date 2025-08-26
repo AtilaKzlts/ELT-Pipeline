@@ -14,6 +14,7 @@
   * Steps
   * DAG Structure
   * DBT Structure
+  * Snapshot
   
 
 ## Project Introduction
