@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Automated ELT Pipeline for E-commerce Analytics
+  <h1>Automated ELT Pipeline for E-Commerce Analytics
 
 </h1>
  </p>
